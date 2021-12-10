@@ -37,6 +37,7 @@ export default {
       employees: [],
       updateAlert: false,
       serverAddress: process.env.VUE_APP_SERVER,
+      offline: true
     };
   },
   created() {
