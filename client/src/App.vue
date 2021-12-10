@@ -43,6 +43,8 @@ export default {
     document.addEventListener('swUpdated', this.updateAvailable, {
       once: true,
     });
+    window.addEventListener('online', () => (this.offline = false));
+    window.addEventListener('offline', () => (this.offline = true));
   },
   methods: {
     async fetchData() {
