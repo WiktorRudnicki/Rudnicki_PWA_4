@@ -10,7 +10,7 @@
       mt-5
     "
   >
-  <h1>Unsere Employees!</h1>
+    <h1>Unsere Employees!</h1>
     <div class="alert alert-danger" v-if="updateAlert">
       Update vorhanden, bitte neustarten!
     </div>
@@ -22,12 +22,12 @@
 </template>
 
 <script>
-import ButtonGet from '@/components/ButtonGet.vue';
-import CardView from '@/components/CardView.vue';
-import axios from 'axios';
+import ButtonGet from "@/components/ButtonGet.vue";
+import CardView from "@/components/CardView.vue";
+import axios from "axios";
 
 export default {
-  name: 'app',
+  name: "app",
   components: {
     ButtonGet,
     CardView,
@@ -37,24 +37,24 @@ export default {
       employees: [],
       updateAlert: false,
       serverAddress: process.env.VUE_APP_SERVER,
-      offline: true
+      offline: true,
     };
   },
   created() {
-    document.addEventListener('swUpdated', this.updateAvailable, {
+    document.addEventListener("swUpdated", this.updateAvailable, {
       once: true,
     });
-    window.addEventListener('online', () => (this.offline = false));
-    window.addEventListener('offline', () => (this.offline = true));
+    window.addEventListener("online", () => (this.offline = false));
+    window.addEventListener("offline", () => (this.offline = true));
   },
   methods: {
     async fetchData() {
       try {
         const { data } = await axios({
-          url: this.serverAddress + '/employees',
+          url: this.serverAddress + "/employees",
         });
         this.employees = data;
-        console.log('Data fetched');
+        console.log("Data fetched");
       } catch (error) {
         console.log(error);
       }
@@ -62,10 +62,10 @@ export default {
     async delEmployee(e) {
       try {
         await axios({
-          url: this.serverAddress + '/employees/' + e.id,
-          method: 'DELETE',
+          url: this.serverAddress + "/employees/" + e.id,
+          method: "DELETE",
         });
-        console.log('Deleted');
+        console.log("Deleted");
       } catch (error) {
         console.log(error);
       }
@@ -73,9 +73,21 @@ export default {
     },
     updateAvailable() {
       this.updateAlert = true;
-      if(confirm('There is an update available. Please refresh')) {
+      if (confirm("There is an update available. Please refresh")) {
         window.location.reload();
       }
+    },
+    async subscribe() {
+      if (!("serviceWorker" in navigator)) {
+        console.log("no service worker!");
+        return;
+      }
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: this.urlBase64ToUint8Array(publicVapidKey),
+      });
+      await axios.post("/subscribe", subscription);
     },
   },
 };
