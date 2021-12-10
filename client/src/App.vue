@@ -70,6 +70,9 @@ export default {
     },
     updateAvailable() {
       this.updateAlert = true;
+      if(confirm('There is an update available. Please refresh')) {
+        window.location.reload();
+      }
     },
   },
 };
